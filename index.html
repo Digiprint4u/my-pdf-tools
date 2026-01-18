@@ -1,258 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PDF Tools Pro – All-in-One PDF Solution</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#f8fafc;
-  --card:#ffffff;
-  --primary:#e5322d;
-  --text:#0f172a;
-  --muted:#64748b;
-  --accent: #2563eb;
-}
-*{box-sizing:border-box;font-family:'Inter',sans-serif}
-body{margin:0;background:var(--bg);color:var(--text)}
-header{
-  background:white;
-  padding:16px 32px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  border-bottom:1px solid #e5e7eb;
-}
-.logo{font-size:22px;font-weight:700;color:var(--primary); cursor: pointer;}
-nav a{margin-left:20px;text-decoration:none;color:#334155;font-weight:500}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Magic – Premium PDF Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #e5322d;
+            --primary-hover: #c42622;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --muted: #64748b;
+        }
 
-.hero{ padding:40px 20px; text-align:center; }
-.hero h1{font-size:42px;margin-bottom:12px}
-.hero p{color:var(--muted);font-size:18px}
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
-.tools{
-  max-width:1000px;
-  margin:20px auto;
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-  gap:20px;
-  padding:0 20px;
-}
-.tool{
-  background:var(--card);
-  border-radius:16px;
-  padding:20px;
-  text-align:center;
-  box-shadow:0 4px 6px rgba(0,0,0,.04);
-  cursor:pointer;
-  transition:.3s;
-  border: 2px solid transparent;
-}
-.tool:hover{transform:translateY(-4px); border-color: var(--primary);}
-.tool.active{border-color: var(--primary); background: #fff5f5;}
-.tool img{width:48px;height:48px;margin-bottom:10px}
-.tool h3{margin:10px 0 5px; font-size: 16px;}
-.tool p{color:var(--muted);font-size:13px; margin: 0;}
+        body { margin: 0; background-color: var(--bg); color: var(--text); line-height: 1.6; }
 
-.upload-section {
-  max-width:700px;
-  margin:40px auto;
-  background:white;
-  border-radius:20px;
-  padding:60px 40px;
-  text-align:center;
-  border:2px dashed #cbd5f5;
-  transition: 0.3s;
-}
-.upload-section.dragover { background: #f0f4ff; border-color: var(--accent); }
-.upload-section h2 { margin-top: 0; }
-.upload-section input{display:none}
+        /* Navbar */
+        header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0; z-index: 100;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
 
-.btn-primary {
-  display:inline-block;
-  margin-top:20px;
-  background:var(--primary);
-  color:white;
-  padding:14px 30px;
-  border-radius:12px;
-  font-weight:600;
-  cursor:pointer;
-  border: none;
-  font-size: 16px;
-}
-.btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
 
-#status-message {
-  margin-top: 20px;
-  font-weight: 500;
-  color: var(--accent);
-}
+        /* Hero Section */
+        .hero { text-align: center; padding: 60px 20px 40px; }
+        .hero h1 { font-size: 48px; margin: 0; font-weight: 800; letter-spacing: -1.5px; }
+        .hero p { color: var(--muted); font-size: 18px; max-width: 600px; margin: 15px auto; }
 
-footer{
-  margin-top:80px;
-  padding:40px;
-  background:#020617;
-  color:#94a3b8;
-  text-align:center;
-}
-</style>
+        /* Tools Grid */
+        .tools-grid {
+            max-width: 1100px;
+            margin: 0 auto 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px; padding: 0 20px;
+        }
+
+        .tool-card {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 24px;
+            text-align: center;
+            border: 2px solid transparent;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(229, 50, 45, 0.1);
+        }
+
+        .tool-card.active { border-color: var(--primary); background: #fffafa; }
+
+        .tool-card img { width: 64px; height: 64px; margin-bottom: 15px; }
+        .tool-card h3 { margin: 10px 0 5px; font-size: 18px; }
+        .tool-card p { color: var(--muted); font-size: 14px; margin: 0; }
+
+        /* Upload Area */
+        .upload-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .upload-box {
+            background: white;
+            border: 3px dashed #e2e8f0;
+            border-radius: 32px;
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .upload-box.dragover { border-color: var(--primary); background: #fff5f5; }
+
+        .btn-upload {
+            background: var(--primary);
+            color: white;
+            padding: 16px 40px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 20px;
+            box-shadow: 0 10px 20px rgba(229, 50, 45, 0.2);
+        }
+
+        .btn-upload:hover { background: var(--primary-hover); transform: scale(1.05); }
+
+        /* Status & Progress */
+        #status { margin-top: 20px; font-weight: 600; color: var(--primary); }
+        
+        .loader {
+            width: 48px; height: 48px;
+            border: 5px solid #FFF;
+            border-bottom-color: var(--primary);
+            border-radius: 50%;
+            display: none;
+            margin: 20px auto;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation { 0% { transform: rotate(0deg) } 100% { transform: rotate(360deg) } }
+
+        footer { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; }
+
+        input[type="file"] { display: none; }
+    </style>
 </head>
 <body>
 
 <header>
-  <div class="logo" onclick="location.reload()">PDF Tools Pro</div>
-  <nav>
-    <a href="#">Home</a>
-    <a href="#">About</a>
-  </nav>
+    <div class="logo">PDF Magic.</div>
 </header>
 
 <section class="hero">
-  <h1>Every tool you need to work with PDFs</h1>
-  <p id="tool-instruction">Select a tool below to get started</p>
+    <h1>Supercharge your PDFs</h1>
+    <p>Premium tools to convert, compress, and OCR your documents with lightning speed.</p>
 </section>
 
-<section class="tools">
-  <!-- Tools Endpoints: pdf-to-word, compress, ocr -->
-  <div class="tool" onclick="selectTool('pdf-to-word', 'PDF to Word', this)">
-    <img src="https://img.icons8.com/color/96/word.png">
-    <h3>PDF to Word</h3>
-    <p>Editable DOCX</p>
-  </div>
-  
-  <div class="tool" onclick="selectTool('compress', 'Compress PDF', this)">
-    <img src="https://img.icons8.com/color/96/compress.png">
-    <h3>Compress PDF</h3>
-    <p>Reduce size</p>
-  </div>
+<div class="tools-grid">
+    <div class="tool-card" id="tool-word" onclick="setMode('pdf-to-word', 'tool-word')">
+        <img src="https://img.icons8.com/color/96/word.png">
+        <h3>PDF to Word</h3>
+        <p>Perfectly editable DOCX</p>
+    </div>
+    <div class="tool-card" id="tool-compress" onclick="setMode('compress', 'tool-compress')">
+        <img src="https://img.icons8.com/color/96/compress.png">
+        <h3>Compress PDF</h3>
+        <p>Reduce size, keep quality</p>
+    </div>
+    <div class="tool-card" id="tool-ocr" onclick="setMode('ocr', 'tool-ocr')">
+        <img src="https://img.icons8.com/color/96/ocr.png">
+        <h3>OCR Engine</h3>
+        <p>Image to searchable PDF</p>
+    </div>
+</div>
 
-  <div class="tool" onclick="selectTool('ocr', 'OCR PDF', this)">
-    <img src="https://img.icons8.com/color/96/ocr.png">
-    <h3>OCR PDF</h3>
-    <p>Scan to text</p>
-  </div>
+<div class="upload-container">
+    <div class="upload-box" id="drop-zone">
+        <h2 id="tool-title">Select a tool above</h2>
+        <p>Drag & drop your file here or click to browse</p>
+        
+        <div class="loader" id="loader"></div>
+        <div id="status"></div>
 
-  <!-- Note: Others need backend implementation to work -->
-  <div class="tool" style="opacity: 0.5; cursor: not-allowed;">
-    <img src="https://img.icons8.com/color/96/merge-documents.png">
-    <h3>Merge PDF</h3>
-    <p>(Coming Soon)</p>
-  </div>
-</section>
-
-<section class="upload-section" id="drop-zone">
-  <h2 id="selected-tool-name">Select a tool first</h2>
-  <p>Upload the file you want to process</p>
-  
-  <input type="file" id="file-input" accept=".pdf,.doc,.docx">
-  <label for="file-input" class="btn-primary" id="upload-label">Choose File</label>
-  
-  <div id="status-message"></div>
-</section>
+        <input type="file" id="fileInput">
+        <label for="fileInput" class="btn-upload" id="labelBtn">Choose File</label>
+    </div>
+</div>
 
 <footer>
-  © 2026 PDF Tools Pro • Secure & Fast • Power by LibreOffice
+    © 2026 PDF Magic • Powered by Render • Secure & Private
 </footer>
 
 <script>
-  // ১. আপনার Render এর URL এখানে বসান (শেষে যেন / না থাকে)
-  const BACKEND_URL = 'https://আপনার-লিংক-এখানে-দিন.onrender.com'; 
+    const BACKEND_URL = 'https://my-pdf-tools2.onrender.com';
+    let currentMode = '';
 
-  let currentMode = '';
-
-  // টুল সিলেক্ট করার ফাংশন
-  function selectTool(mode, name, element) {
-    currentMode = mode;
-    
-    // UI Update
-    document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
-    element.classList.add('active');
-    document.getElementById('selected-tool-name').innerText = name;
-    document.getElementById('tool-instruction').innerText = "Now upload your file for " + name;
-    
-    // Scroll to upload section
-    document.getElementById('drop-zone').scrollIntoView({ behavior: 'smooth' });
-  }
-
-  // ফাইল ইনপুট চেঞ্জ হ্যান্ডলার
-  document.getElementById('file-input').addEventListener('change', function(e) {
-    if (this.files.length > 0) {
-      handleUpload(this.files[0]);
-    }
-  });
-
-  // ফাইল আপলোড ও প্রসেসিং ফাংশন
-  async function handleUpload(file) {
-    if (!currentMode) {
-      alert("Please select a tool first (e.g., PDF to Word)");
-      return;
+    function setMode(mode, cardId) {
+        currentMode = mode;
+        document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('active'));
+        document.getElementById(cardId).classList.add('active');
+        document.getElementById('tool-title').innerText = "Ready to process " + mode.replace(/-/g, ' ');
+        document.getElementById('drop-zone').scrollIntoView({ behavior: 'smooth' });
     }
 
-    const statusMsg = document.getElementById('status-message');
-    const uploadBtn = document.getElementById('upload-label');
-    
-    const formData = new FormData();
-    formData.append('file', file);
+    const fileInput = document.getElementById('fileInput');
+    const loader = document.getElementById('loader');
+    const status = document.getElementById('status');
+    const labelBtn = document.getElementById('labelBtn');
 
-    // UI State Loading
-    statusMsg.innerText = "Processing your file... Please wait (1-2 minutes).";
-    uploadBtn.style.display = 'none';
+    fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (!currentMode) return alert("Please select a tool first!");
 
-    try {
-      const response = await fetch(`${BACKEND_URL}/${currentMode}`, {
-        method: 'POST',
-        body: formData
-      });
+        const formData = new FormData();
+        formData.append('file', file);
 
-      if (response.ok) {
-        const blob = await response.blob();
-        const downloadUrl = window.URL.createObjectURL(blob);
-        
-        // ফাইল ডাউনলোডের জন্য টেম্পোরারি লিংক তৈরি
-        const a = document.createElement('a');
-        a.href = downloadUrl;
-        
-        // এক্সটেনশন ঠিক করা
-        let fileName = "processed_file";
-        if(currentMode === 'pdf-to-word') fileName += ".docx";
-        else fileName += ".pdf";
-        
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+        // UI Updates
+        loader.style.display = 'block';
+        status.innerText = "Processing your document... please wait.";
+        labelBtn.style.opacity = '0.5';
+        labelBtn.style.pointerEvents = 'none';
 
-        statusMsg.style.color = "green";
-        statusMsg.innerText = "Success! Your file has been downloaded.";
-      } else {
-        const errData = await response.json();
-        statusMsg.style.color = "red";
-        statusMsg.innerText = "Error: " + (errData.error || "Failed to process file.");
-      }
-    } catch (error) {
-      console.error(error);
-      statusMsg.style.color = "red";
-      statusMsg.innerText = "Cannot connect to server. Make sure the Backend URL is correct.";
-    } finally {
-      uploadBtn.style.display = 'inline-block';
-    }
-  }
+        try {
+            const response = await fetch(`${BACKEND_URL}/${currentMode}`, {
+                method: 'POST',
+                body: formData
+            });
 
-  // ড্র্যাগ অ্যান্ড ড্রপ ফিচার (ঐচ্ছিক)
-  const dropZone = document.getElementById('drop-zone');
-  dropZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropZone.classList.add('dragover');
-  });
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-  dropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropZone.classList.remove('dragover');
-    if (e.dataTransfer.files.length > 0) {
-      handleUpload(e.dataTransfer.files[0]);
-    }
-  });
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `pdfmagic_${Date.now()}.${currentMode === 'pdf-to-word' ? 'docx' : 'pdf'}`;
+                document.body.appendChild(a);
+                a.click();
+                status.innerText = "✨ Successfully processed and downloaded!";
+                status.style.color = "#10b981";
+            } else {
+                status.innerText = "❌ Something went wrong. Please try again.";
+                status.style.color = "#ef4444";
+            }
+        } catch (err) {
+            status.innerText = "❌ Server error. Please check your connection.";
+        } finally {
+            loader.style.display = 'none';
+            labelBtn.style.opacity = '1';
+            labelBtn.style.pointerEvents = 'auto';
+        }
+    });
+
+    // Drag and Drop
+    const dz = document.getElementById('drop-zone');
+    dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('dragover'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+    dz.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dz.classList.remove('dragover');
+        fileInput.files = e.dataTransfer.files;
+        fileInput.dispatchEvent(new Event('change'));
+    });
 </script>
 
 </body>
