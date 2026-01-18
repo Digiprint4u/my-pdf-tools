@@ -1,37 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Magic</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Magic – Pro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --primary:#e5322d;
+  --success:#10b981;
+  --bg:#f8fafc;
+}
+body{margin:0;font-family:'Plus Jakarta Sans';background:var(--bg)}
+header{padding:15px;background:#fff;font-weight:800;color:var(--primary)}
+.tool-options{margin-top:15px;display:none}
+.tool-options select, .tool-options button{
+  padding:10px;border-radius:10px;border:1px solid #ddd;margin:5px
+}
+.compress-btn.active{background:var(--primary);color:#fff}
+</style>
 </head>
+
 <body>
-  <h2>PDF Magic – Online Tools</h2>
 
-  <input type="file" id="file" />
-  <br><br>
-  <button onclick="convert('pdf-to-word')">PDF to Word</button>
-  <button onclick="convert('compress')">Compress PDF</button>
+<header>PDF Magic PRO</header>
 
-  <script>
-    const API = 'https://my-pdf-tools2.onrender.com';
+<div style="padding:20px;text-align:center">
 
-    async function convert(type) {
-      const file = document.getElementById('file').files[0];
-      if (!file) return alert('Select file');
+<h2 id="tool-title">Select Tool</h2>
 
-      const fd = new FormData();
-      fd.append('file', file);
+<button onclick="setMode('pdf-to-word')">PDF ➜ Word</button>
+<button onclick="setMode('compress')">Compress PDF</button>
+<button onclick="setMode('ocr')">OCR PDF</button>
 
-      const res = await fetch(`${API}/${type}`, { method: 'POST', body: fd });
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
+<!-- COMPRESS OPTIONS -->
+<div class="tool-options" id="compressOptions">
+  <p>Compression Level</p>
+  <button class="compress-btn active" onclick="setCompress('ebook')">Medium</button>
+  <button class="compress-btn" onclick="setCompress('screen')">Low</button>
+  <button class="compress-btn" onclick="setCompress('printer')">High</button>
+</div>
 
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = Date.now();
-      a.click();
-    }
-  </script>
+<!-- OCR OPTIONS -->
+<div class="tool-options" id="ocrOptions">
+  <p>OCR Settings</p>
+  <select id="ocrLang">
+    <option value="eng">English</option>
+    <option value="ben">Bengali</option>
+    <option value="hin">Hindi</option>
+  </select>
+
+  <select id="ocrQuality">
+    <option value="fast">Fast</option>
+    <option value="high">High Accuracy</option>
+  </select>
+</div>
+
+<br>
+<input type="file" id="file" />
+<br><br>
+
+<button onclick="upload()">Start</button>
+<p id="status"></p>
+
+</div>
+
+<script>
+const API = "https://my-pdf-tools2.onrender.com";
+let mode = "";
+let compressLevel = "ebook";
+
+function setMode(m){
+  mode = m;
+  document.getElementById("tool-title").innerText = "Selected: " + m;
+  document.getElementById("compressOptions").style.display = m==="compress"?"block":"none";
+  document.getElementById("ocrOptions").style.display = m==="ocr"?"block":"none";
+}
+
+function setCompress(level){
+  compressLevel = level;
+  document.querySelectorAll('.compress-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+async function upload(){
+  const file = document.getElementById("file").files[0];
+  if(!file || !mode) return alert("Select tool & file");
+
+  if(file.size > 25*1024*1024) return alert("Max 25MB allowed");
+
+  const fd = new FormData();
+  fd.append("file", file);
+
+  if(mode==="compress") fd.append("level", compressLevel);
+  if(mode==="ocr"){
+    fd.append("lang", document.getElementById("ocrLang").value);
+    fd.append("quality", document.getElementById("ocrQuality").value);
+  }
+
+  document.getElementById("status").innerText="Processing...";
+
+  const res = await fetch(`${API}/${mode}`,{method:"POST",body:fd});
+  const blob = await res.blob();
+
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=Date.now()+".pdf";
+  a.click();
+
+  document.getElementById("status").innerText="Done ✅";
+}
+</script>
+
 </body>
 </html>
