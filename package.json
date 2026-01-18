@@ -1,22 +1,15 @@
 {
-  "name": "my-pdf-tools",
+  "name": "pdf-tools-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Production ready PDF tools backend",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Digiprint4u/my-pdf-tools.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/Digiprint4u/my-pdf-tools/issues"
-  },
-  "homepage": "https://github.com/Digiprint4u/my-pdf-tools#readme"
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^9.0.1"
+  }
 }
