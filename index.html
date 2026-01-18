@@ -1,143 +1,152 @@
+নীচে ঠিক যেভাবে GitHub‑এ রাখবেন, **server.js**, **index.html**, **package.json**—একদম ready‑to‑deploy দেওয়া হলো।
+
+---
+
+## ✅ 1️⃣ server.js (GitHub‑এ এইভাবেই রাখবেন)
+
+```js
+const express = require('express');
+const multer = require('multer');
+const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
+const { exec } = require('child_process');
+const { v4: uuid } = require('uuid');
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+app.use(express.static(__dirname));
+
+const uploadDir = path.join(__dirname, 'uploads');
+const outputDir = path.join(__dirname, 'outputs');
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
+if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
+
+const upload = multer({ dest: 'uploads/' });
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// PDF ➜ Word
+app.post('/pdf-to-word', upload.single('file'), (req, res) => {
+  const input = req.file.path;
+  const output = path.join(outputDir, `${req.file.filename}.docx`);
+
+  exec(`libreoffice --headless --convert-to docx ${input} --outdir ${outputDir}`, err => {
+    if (err) return res.status(500).send('Conversion failed');
+    res.download(output, () => {
+      fs.unlinkSync(input);
+      fs.unlinkSync(output);
+    });
+  });
+});
+
+// Compress PDF
+app.post('/compress', upload.single('file'), (req, res) => {
+  const input = req.file.path;
+  const output = path.join(outputDir, `${uuid()}.pdf`);
+
+  exec(`gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=${output} ${input}`, err => {
+    if (err) return res.status(500).send('Compression failed');
+    res.download(output, () => {
+      fs.unlinkSync(input);
+      fs.unlinkSync(output);
+    });
+  });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log('Server running on port ' + PORT));
+```
+
+---
+
+## ✅ 2️⃣ index.html (Root folder‑এ রাখবেন)
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PDF Pro Tools</title>
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background:#f4f6f9;
-  margin:0;
-  padding:20px;
-}
-.container {
-  max-width:900px;
-  margin:auto;
-  background:#fff;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
-}
-h1 { text-align:center; }
-.tool {
-  border:1px dashed #ccc;
-  padding:20px;
-  margin:20px 0;
-  border-radius:8px;
-}
-button {
-  padding:10px 18px;
-  background:#1976d2;
-  color:white;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-}
-button:disabled {
-  background:#aaa;
-}
-select, input[type=file] {
-  margin:10px 0;
-}
-.loader {
-  display:none;
-  margin-top:10px;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Magic</title>
 </head>
-
 <body>
-<div class="container">
-  <h1>📄 PDF PRO TOOLS</h1>
+  <h2>PDF Magic – Online Tools</h2>
 
-  <!-- COMPRESS -->
-  <div class="tool">
-    <h2>🗜️ Compress PDF</h2>
-    <input type="file" id="compressFile" accept="application/pdf" />
-    <br/>
-    <select id="compressLevel">
-      <option value="screen">Low Compression</option>
-      <option value="ebook" selected>Medium Compression</option>
-      <option value="printer">High Compression</option>
-    </select>
-    <br/>
-    <button onclick="compressPDF()">Compress</button>
-    <div class="loader" id="compressLoader">Processing...</div>
-  </div>
+  <input type="file" id="file" />
+  <br><br>
+  <button onclick="convert('pdf-to-word')">PDF to Word</button>
+  <button onclick="convert('compress')">Compress PDF</button>
 
-  <!-- OCR -->
-  <div class="tool">
-    <h2>🔍 OCR PDF</h2>
-    <input type="file" id="ocrFile" accept="application/pdf" />
-    <br/>
-    <button onclick="ocrPDF()">Run OCR</button>
-    <div class="loader" id="ocrLoader">Processing...</div>
-  </div>
-</div>
+  <script>
+    const API = 'https://my-pdf-tools2.onrender.com';
 
-<script>
-const API = "http://localhost:3000"; // change after deploy
+    async function convert(type) {
+      const file = document.getElementById('file').files[0];
+      if (!file) return alert('Select file');
 
-function download(blob, filename) {
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-}
+      const fd = new FormData();
+      fd.append('file', file);
 
-async function compressPDF() {
-  const file = document.getElementById("compressFile").files[0];
-  if (!file) return alert("Select PDF first");
+      const res = await fetch(`${API}/${type}`, { method: 'POST', body: fd });
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
 
-  if (file.size > 25 * 1024 * 1024) {
-    return alert("Max 25MB allowed");
-  }
-
-  document.getElementById("compressLoader").style.display = "block";
-
-  const fd = new FormData();
-  fd.append("file", file);
-  fd.append("level", document.getElementById("compressLevel").value);
-
-  const res = await fetch(API + "/compress", {
-    method: "POST",
-    body: fd
-  });
-
-  document.getElementById("compressLoader").style.display = "none";
-
-  if (!res.ok) return alert("Compression failed");
-
-  const blob = await res.blob();
-  download(blob, "compressed.pdf");
-}
-
-async function ocrPDF() {
-  const file = document.getElementById("ocrFile").files[0];
-  if (!file) return alert("Select PDF first");
-
-  document.getElementById("ocrLoader").style.display = "block";
-
-  const fd = new FormData();
-  fd.append("file", file);
-
-  const res = await fetch(API + "/ocr", {
-    method: "POST",
-    body: fd
-  });
-
-  document.getElementById("ocrLoader").style.display = "none";
-
-  if (!res.ok) return alert("OCR failed");
-
-  const blob = await res.blob();
-  download(blob, "ocr.pdf");
-}
-</script>
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = Date.now();
+      a.click();
+    }
+  </script>
 </body>
 </html>
+```
+
+👉 আপনি চাইলে আপনার advanced UI এখানে replace করতে পারবেন
+
+---
+
+## ✅ 3️⃣ package.json
+
+```json
+{
+  "name": "pdf-tools",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "18.x"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "multer": "^1.4.5",
+    "uuid": "^9.0.1"
+  }
+}
+```
+
+---
+
+## 🚀 এই অবস্থায় কী কাজ করবে
+
+✔ [https://my-pdf-tools2.onrender.com](https://my-pdf-tools2.onrender.com) খুলবে
+✔ PDF ➜ Word
+✔ PDF Compress
+✔ Render compatible
+✔ GitHub auto deploy
+
+---
+
+## 🔜 Next (আপনি যেটা চেয়েছিলেন)
+
+👉 **OCR + Compress Advanced Level**
+👉 **Login + Credit system**
+
+বলুন কোনটা আগে চান, আমি সেইটার **full file‑by‑file দেব**
