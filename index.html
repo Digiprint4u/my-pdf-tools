@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PDF Tools Pro – All-in-One PDF Solution</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --primary:#e5322d;
+  --text:#0f172a;
+  --muted:#64748b;
+  --accent: #2563eb;
+}
+*{box-sizing:border-box;font-family:'Inter',sans-serif}
+body{margin:0;background:var(--bg);color:var(--text)}
+header{
+  background:white;
+  padding:16px 32px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #e5e7eb;
+}
+.logo{font-size:22px;font-weight:700;color:var(--primary); cursor: pointer;}
+nav a{margin-left:20px;text-decoration:none;color:#334155;font-weight:500}
+
+.hero{ padding:40px 20px; text-align:center; }
+.hero h1{font-size:42px;margin-bottom:12px}
+.hero p{color:var(--muted);font-size:18px}
+
+.tools{
+  max-width:1000px;
+  margin:20px auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:20px;
+  padding:0 20px;
+}
+.tool{
+  background:var(--card);
+  border-radius:16px;
+  padding:20px;
+  text-align:center;
+  box-shadow:0 4px 6px rgba(0,0,0,.04);
+  cursor:pointer;
+  transition:.3s;
+  border: 2px solid transparent;
+}
+.tool:hover{transform:translateY(-4px); border-color: var(--primary);}
+.tool.active{border-color: var(--primary); background: #fff5f5;}
+.tool img{width:48px;height:48px;margin-bottom:10px}
+.tool h3{margin:10px 0 5px; font-size: 16px;}
+.tool p{color:var(--muted);font-size:13px; margin: 0;}
+
+.upload-section {
+  max-width:700px;
+  margin:40px auto;
+  background:white;
+  border-radius:20px;
+  padding:60px 40px;
+  text-align:center;
+  border:2px dashed #cbd5f5;
+  transition: 0.3s;
+}
+.upload-section.dragover { background: #f0f4ff; border-color: var(--accent); }
+.upload-section h2 { margin-top: 0; }
+.upload-section input{display:none}
+
+.btn-primary {
+  display:inline-block;
+  margin-top:20px;
+  background:var(--primary);
+  color:white;
+  padding:14px 30px;
+  border-radius:12px;
+  font-weight:600;
+  cursor:pointer;
+  border: none;
+  font-size: 16px;
+}
+.btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+
+#status-message {
+  margin-top: 20px;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+footer{
+  margin-top:80px;
+  padding:40px;
+  background:#020617;
+  color:#94a3b8;
+  text-align:center;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="location.reload()">PDF Tools Pro</div>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">About</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Every tool you need to work with PDFs</h1>
+  <p id="tool-instruction">Select a tool below to get started</p>
+</section>
+
+<section class="tools">
+  <!-- Tools Endpoints: pdf-to-word, compress, ocr -->
+  <div class="tool" onclick="selectTool('pdf-to-word', 'PDF to Word', this)">
+    <img src="https://img.icons8.com/color/96/word.png">
+    <h3>PDF to Word</h3>
+    <p>Editable DOCX</p>
+  </div>
+  
+  <div class="tool" onclick="selectTool('compress', 'Compress PDF', this)">
+    <img src="https://img.icons8.com/color/96/compress.png">
+    <h3>Compress PDF</h3>
+    <p>Reduce size</p>
+  </div>
+
+  <div class="tool" onclick="selectTool('ocr', 'OCR PDF', this)">
+    <img src="https://img.icons8.com/color/96/ocr.png">
+    <h3>OCR PDF</h3>
+    <p>Scan to text</p>
+  </div>
+
+  <!-- Note: Others need backend implementation to work -->
+  <div class="tool" style="opacity: 0.5; cursor: not-allowed;">
+    <img src="https://img.icons8.com/color/96/merge-documents.png">
+    <h3>Merge PDF</h3>
+    <p>(Coming Soon)</p>
+  </div>
+</section>
+
+<section class="upload-section" id="drop-zone">
+  <h2 id="selected-tool-name">Select a tool first</h2>
+  <p>Upload the file you want to process</p>
+  
+  <input type="file" id="file-input" accept=".pdf,.doc,.docx">
+  <label for="file-input" class="btn-primary" id="upload-label">Choose File</label>
+  
+  <div id="status-message"></div>
+</section>
+
+<footer>
+  © 2026 PDF Tools Pro • Secure & Fast • Power by LibreOffice
+</footer>
+
+<script>
+  // ১. আপনার Render এর URL এখানে বসান (শেষে যেন / না থাকে)
+  const BACKEND_URL = 'https://আপনার-লিংক-এখানে-দিন.onrender.com'; 
+
+  let currentMode = '';
+
+  // টুল সিলেক্ট করার ফাংশন
+  function selectTool(mode, name, element) {
+    currentMode = mode;
+    
+    // UI Update
+    document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
+    element.classList.add('active');
+    document.getElementById('selected-tool-name').innerText = name;
+    document.getElementById('tool-instruction').innerText = "Now upload your file for " + name;
+    
+    // Scroll to upload section
+    document.getElementById('drop-zone').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ফাইল ইনপুট চেঞ্জ হ্যান্ডলার
+  document.getElementById('file-input').addEventListener('change', function(e) {
+    if (this.files.length > 0) {
+      handleUpload(this.files[0]);
+    }
+  });
+
+  // ফাইল আপলোড ও প্রসেসিং ফাংশন
+  async function handleUpload(file) {
+    if (!currentMode) {
+      alert("Please select a tool first (e.g., PDF to Word)");
+      return;
+    }
+
+    const statusMsg = document.getElementById('status-message');
+    const uploadBtn = document.getElementById('upload-label');
+    
+    const formData = new FormData();
+    formData.append('file', file);
+
+    // UI State Loading
+    statusMsg.innerText = "Processing your file... Please wait (1-2 minutes).";
+    uploadBtn.style.display = 'none';
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/${currentMode}`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        
+        // ফাইল ডাউনলোডের জন্য টেম্পোরারি লিংক তৈরি
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        
+        // এক্সটেনশন ঠিক করা
+        let fileName = "processed_file";
+        if(currentMode === 'pdf-to-word') fileName += ".docx";
+        else fileName += ".pdf";
+        
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        statusMsg.style.color = "green";
+        statusMsg.innerText = "Success! Your file has been downloaded.";
+      } else {
+        const errData = await response.json();
+        statusMsg.style.color = "red";
+        statusMsg.innerText = "Error: " + (errData.error || "Failed to process file.");
+      }
+    } catch (error) {
+      console.error(error);
+      statusMsg.style.color = "red";
+      statusMsg.innerText = "Cannot connect to server. Make sure the Backend URL is correct.";
+    } finally {
+      uploadBtn.style.display = 'inline-block';
+    }
+  }
+
+  // ড্র্যাগ অ্যান্ড ড্রপ ফিচার (ঐচ্ছিক)
+  const dropZone = document.getElementById('drop-zone');
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) {
+      handleUpload(e.dataTransfer.files[0]);
+    }
+  });
+</script>
+
+</body>
+</html>
